@@ -10,7 +10,7 @@ Currently it only supports structured data but I'll be extending it's support fo
 
 In order to get the dataloader start by creating the FetchDataLoader instance and calling get_dataloader method to get dataloader for the corresponding data.
 
-```
+```python
 >>> from mousebit.structured import FetchDataLoader
 >>> msb = FetchDataLoader(X,Y)
 >>> dataloader = msb.get_dataloader(self, batch_size = 64, drop_last = True, shuffle = True)
@@ -20,7 +20,7 @@ In order to get the dataloader start by creating the FetchDataLoader instance an
 
 To get train and test dataloaders MouseBit has get_dataloader_splits method in FetchDataLoader.
 
-```
+```python
 >>> from mousebit.structured import FetchDataLoader
 >>> msb = FetchDataLoader(X,Y)
 >>> trainloader, testloader = msb.get_dataloader_splits(self, batch_size = 64, stratify_on_y = False, random_state = 101, test_size = 0.3)
