@@ -18,24 +18,30 @@ class FetchDataset(Dataset):
             'y' : torch.tensor(self.Y[idx], dtype = self.y_dtype)
         }
 
-class FetchDataLoader:
-    def __init__(self, features, target):
-        self.X = features
-        self.Y = target
-        
-    def get_dataloader(self, batch_size = 32, sampler = None, num_workers = 0, drop_last = False, shuffle = False):
-        dataset = FetchDataset(self.X, self.Y)
-        return DataLoader(dataset, batch_size = batch_size, sampler = sampler, num_workers = num_workers, drop_last = drop_last, shuffle = shuffle)
+def get_dataloader(X, Y, batch_size = 32, *args, **kwargs):
+    dataset = FetchDataset(X, Y)
+    return DataLoader(dataset, batch_size = batch_size, *args, **kwargs)
 
-    def get_dataloader_splits(self, test_size = 0.25, random_state = 0, stratify_on_y = True, batch_size = 32):
-        if stratify_on_y:
-            x_train, x_test, y_train, y_test = train_test_split(self.X, self.Y, random_state = random_state, stratify = self.Y)
-        else:
-            x_train, x_test, y_train, y_test = train_test_split(self.X, self.Y, random_state = random_state)
-        
-        train_dataset = FetchDataset(x_train, y_train)
+def get_dataloader_splits(X, Y, test_size = 0.25, random_state = 0, stratify_on_y = True, batch_size = 32, valid_split = False, test_to_valid_ratio = 0.3, *args, **kwargs):
+    if stratify_on_y:
+        x_train, x_test, y_train, y_test = train_test_split(X, Y, random_state = random_state, stratify = Y, test_size = test_size)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(X, Y, random_state = random_state, test_size = test_size)
+    
+    train_dataset = FetchDataset(x_train, y_train)
+    trainloader = DataLoader(train_dataset, batch_size = batch_size, *args, **kwargs)
+
+    if valid_split:
+        x_valid, x_test, y_valid, y_test = train_test_split(x_test, y_test, random_state = random_state, test_size = test_to_valid_ratio, stratify = y_test)
+
+        valid_dataset = FetchDataset(x_valid, y_valid)
+        validloader = DataLoader(valid_dataset, batch_size = batch_size, *args, **kwargs)
+
         test_dataset = FetchDataset(x_test, y_test)
+        testloader = DataLoader(test_dataset, batch_size = batch_size, *args, **kwargs)
+        return trainloader, validloader, testloader
 
-        trainloader = DataLoader(train_dataset, batch_size = batch_size)
-        testloader = DataLoader(test_dataset, batch_size = batch_size)
+    else:
+        test_dataset = FetchDataset(x_test, y_test)
+        testloader = DataLoader(test_dataset, batch_size = batch_size, *args, **kwargs)
         return trainloader, testloader

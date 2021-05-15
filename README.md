@@ -1,6 +1,11 @@
 # MouseBit
 
-An easy to use PyTorch utility for easy DataLoader creation. DataLoader creation can be redundant at times, keeping that in mind MouseBit was created to quickly create DataLoaders quickly. 
+An easy to use PyTorch utility for easy DataLoader creation. DataLoader creation can be redundant at times, keeping that in mind MouseBit was created to quickly create DataLoaders quickly.
+
+## New Features
+
+* Added Text and Image Dataloader support.
+* Wrapped Fetching Dataloader to a function instead of class.
 
 ## Tutorial
 
